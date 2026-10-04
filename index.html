@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuizMaster Arena 🎮 — Study Game & Quiz Battle</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+              950: '#0b0f19'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#0b0f19] text-gray-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+  <!-- TOP PROGRESSION & STATS HUD -->
+  <header class="sticky top-0 z-40 bg-[#0f172a]/80 backdrop-blur-md border-b border-white/10 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+
+      <!-- Logo & Rank Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-xl shadow-lg shadow-indigo-500/25 cursor-pointer" onclick="ui.switchView('arena')">
+          🎮
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-black text-white text-lg tracking-tight">QuizMaster</span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-widest">Arena</span>
+          </div>
+          <div class="text-xs text-indigo-400 font-semibold" id="hud-rank-title">Novice Scholar</div>
+        </div>
+      </div>
+
+      <!-- XP Bar & Level Metric -->
+      <div class="flex items-center gap-3 min-w-[220px] max-w-xs flex-1">
+        <div class="px-2.5 py-1 rounded-xl bg-indigo-600/30 border border-indigo-500/40 text-xs font-black text-indigo-300" id="hud-level">
+          Lv. 1
+        </div>
+        <div class="flex-1 space-y-1">
+          <div class="flex justify-between text-[11px] font-mono text-gray-400">
+            <span>XP Progress</span>
+            <span id="hud-xp-text">0 / 150 XP</span>
+          </div>
+          <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden p-0.5">
+            <div id="hud-xp-bar" class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full progress-bar-smooth" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coins, Streaks & Audio Toggle -->
+      <div class="flex items-center gap-3">
+        <!-- Coin Wallet -->
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-black text-sm cursor-pointer hover:bg-amber-500/20 transition" onclick="ui.switchView('shop')">
+          <span>🪙</span>
+          <span id="hud-coins" class="font-mono">100</span>
+        </div>
+
+        <!-- Daily Streak -->
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-400 font-black text-sm cursor-pointer hover:bg-orange-500/20 transition" onclick="ui.switchView('daily')">
+          <span class="animate-flame">🔥</span>
+          <span id="hud-streak" class="font-mono">1</span>
+        </div>
+
+        <!-- Audio Sound Toggle -->
+        <button id="sound-toggle-btn" class="w-9 h-9 rounded-xl bg-gray-800/80 hover:bg-gray-700 border border-white/10 flex items-center justify-center text-sm transition" title="Toggle Sound Effects">
+          🔊
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="bg-[#0b0f19]/90 border-b border-white/5 px-4 overflow-x-auto">
+    <div class="max-w-7xl mx-auto flex items-center gap-1 py-2 min-w-max">
+      <button class="nav-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border transition bg-indigo-600/30 border-indigo-500 text-white" data-view="arena">
+        <span>⚔️</span>
+        <span>1v1 Battle</span>
+      </button>
+
+      <button class="nav-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border border-transparent text-gray-400 hover:text-white transition" data-view="daily">
+        <span>🔥</span>
+        <span>Daily Challenge</span>
+      </button>
+
+      <button class="nav-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border border-transparent text-gray-400 hover:text-white transition" data-view="solo">
+        <span>📚</span>
+        <span>Subject Quests</span>
+      </button>
+
+      <button class="nav-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border border-transparent text-gray-400 hover:text-white transition" data-view="blitz">
+        <span>⚡</span>
+        <span>Survival Blitz</span>
+      </button>
+
+      <button class="nav-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border border-transparent text-gray-400 hover:text-white transition" data-view="decks">
+        <span>🎴</span>
+        <span>Deck Architect</span>
+      </button>
+
+      <button class="nav-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border border-transparent text-gray-400 hover:text-white transition" data-view="shop">
+        <span>🛍️</span>
+        <span>Power-Up Shop</span>
+      </button>
+
+      <button class="nav-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border border-transparent text-gray-400 hover:text-white transition" data-view="leaderboard">
+        <span>🏆</span>
+        <span>Leaderboard</span>
+      </button>
+
+      <button class="nav-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border border-transparent text-gray-400 hover:text-white transition" data-view="profile">
+        <span>👤</span>
+        <span>Profile & Badges</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8" id="main-content-view">
+    <!-- Rendered dynamically by UI manager -->
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-white/5 py-4 px-6 text-center text-xs text-gray-500 bg-[#0b0f19]">
+    <div class="flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto gap-2">
+      <div>QuizMaster Arena &bull; Turn Studying Into An Epic Game 🎮</div>
+      <div class="flex items-center gap-3">
+        <span>💡 Keyboard Hotkeys: <kbd class="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-300 font-mono">1</kbd> <kbd class="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-300 font-mono">2</kbd> <kbd class="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-300 font-mono">3</kbd> <kbd class="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-300 font-mono">4</kbd></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT MODULES -->
+  <script src="js/audio.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
